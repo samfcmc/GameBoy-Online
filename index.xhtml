@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
     <head>
-        <style type="text/css">@import url(&quot;css/GameBoy.css&quot;);</style>
+        <link rel="stylesheet" type="text/css" href="css/GameBoy.css" />
         <script type="text/javascript">
     var DEBUG_MESSAGES = false;
     var DEBUG_WINDOWING = false;
@@ -10,6 +10,8 @@
         windowingInitialize();
     }
         </script>
+        <script type="text/javascript" src="js/jquery-1.11.0.js"/>
+        <script type="text/javascript" src="js/dump.js"/>
         <script type="text/javascript" src="js/other/windowStack.js"/>
         <script type="text/javascript" src="js/other/terminal.js"/>
         <script type="text/javascript" src="js/other/gui.js"/>
@@ -205,6 +207,9 @@
         </ul>
         <div id="fullscreenContainer">
             <canvas id="fullscreen" class="maximum"/>
+        </div>
+        <div>
+            <textarea id="dump" rows="10" cols="50"></textarea>
         </div>
     </body>
 </html>

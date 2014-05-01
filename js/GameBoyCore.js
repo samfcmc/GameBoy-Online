@@ -1,5 +1,5 @@
 "use strict";
-/* 
+/*
  * JavaScript GameBoy Color Emulator
  * Copyright (C) 2010 - 2012 Grant Galitz
  *
@@ -18,7 +18,7 @@ function GameBoyCore(canvas, ROMImage) {
 	//Params, etc...
 	this.canvas = canvas;						//Canvas DOM object for drawing out the graphics to.
 	this.drawContext = null;					// LCD Context
-	this.ROMImage = ROMImage;					//The game's ROM. 
+	this.ROMImage = ROMImage;					//The game's ROM.
 	//CPU Registers and Flags:
 	this.registerA = 0x01; 						//Register A (Accumulator)
 	this.FZero = true; 							//Register F  - Result was zero
@@ -279,7 +279,7 @@ GameBoyCore.prototype.GBCBOOTROM = [	//GBC BOOT ROM
 	//Add 2048 byte boot rom here if you are going to use it.
 ];
 GameBoyCore.prototype.ffxxDump = [	//Dump of the post-BOOT I/O register state (From gambatte):
-	0x0F, 0x00, 0x7C, 0xFF, 0x00, 0x00, 0x00, 0xF8, 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01,
+	0x0F, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xF8, 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01,
 	0x80, 0xBF, 0xF3, 0xFF, 0xBF, 0xFF, 0x3F, 0x00, 	0xFF, 0xBF, 0x7F, 0xFF, 0x9F, 0xFF, 0xBF, 0xFF,
 	0xFF, 0x00, 0x00, 0xBF, 0x77, 0xF3, 0xF1, 0xFF, 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 	0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
@@ -5016,7 +5016,7 @@ GameBoyCore.prototype.initLCD = function () {
 		this.canvasOffscreen.height = this.offscreenHeight;
 		this.drawContextOffscreen = this.canvasOffscreen.getContext("2d");
 		this.drawContextOnscreen = this.canvas.getContext("2d");
-		this.canvas.setAttribute("style", (this.canvas.getAttribute("style") || "") + "; image-rendering: " + ((settings[13]) ? "auto" : "-webkit-optimize-contrast") + ";" + 
+		this.canvas.setAttribute("style", (this.canvas.getAttribute("style") || "") + "; image-rendering: " + ((settings[13]) ? "auto" : "-webkit-optimize-contrast") + ";" +
 		"image-rendering: " + ((settings[13]) ? "optimizeQuality" : "-o-crisp-edges") + ";" +
 		"image-rendering: " + ((settings[13]) ? "optimizeQuality" : "-moz-crisp-edges") + ";" +
 		"-ms-interpolation-mode: " + ((settings[13]) ? "bicubic" : "nearest-neighbor") + ";");
@@ -5950,7 +5950,7 @@ GameBoyCore.prototype.matchLYC = function () {	//LYC Register Compare
 			this.interruptsRequested |= 0x2;
 			this.checkIRQMatching();
 		}
-	} 
+	}
 	else {
 		this.memory[0xFF41] &= 0x7B;
 	}
@@ -6041,7 +6041,7 @@ GameBoyCore.prototype.initializeLCDController = function () {
 						if (parentObj.LYCMatchTriggerSTAT) {
 							parentObj.interruptsRequested |= 0x2;
 						}
-					} 
+					}
 					else {
 						parentObj.memory[0xFF41] &= 0x7B;
 					}
@@ -6092,7 +6092,7 @@ GameBoyCore.prototype.initializeLCDController = function () {
 						if (parentObj.LYCMatchTriggerSTAT) {
 							parentObj.interruptsRequested |= 0x2;
 						}
-					} 
+					}
 					else {
 						parentObj.memory[0xFF41] &= 0x7B;
 					}
@@ -6134,7 +6134,7 @@ GameBoyCore.prototype.initializeLCDController = function () {
 							parentObj.interruptsRequested |= 0x2;
 							parentObj.checkIRQMatching();
 						}
-					} 
+					}
 					else {
 						parentObj.memory[0xFF41] &= 0x7B;
 					}
@@ -6155,7 +6155,7 @@ GameBoyCore.prototype.initializeLCDController = function () {
 								parentObj.interruptsRequested |= 0x2;
 								parentObj.checkIRQMatching();
 							}
-						} 
+						}
 						else {
 							parentObj.memory[0xFF41] &= 0x7B;
 						}
@@ -6429,7 +6429,7 @@ GameBoyCore.prototype.initializeReferencesFromSaveState = function () {
 			this.OBJPalette = this.gbOBJColorizedPalette;
 			this.updateGBBGPalette = this.updateGBColorizedBGPalette;
 			this.updateGBOBJPalette = this.updateGBColorizedOBJPalette;
-			
+
 		}
 		else {
 			this.BGPalette = this.gbBGPalette;
@@ -7060,7 +7060,7 @@ GameBoyCore.prototype.SpriteGBLayerRender = function (scanlineToRender) {
 				linePixel = xCoordStart = this.memory[OAMAddress | 1];
 				xCoordEnd = Math.min(168 - linePixel, 8);
 				xcoord = (linePixel > 7) ? 0 : (8 - linePixel);
-				for (currentPixel = this.pixelStart + ((linePixel > 8) ? (linePixel - 8) : 0); xcoord < xCoordEnd; ++xcoord, ++currentPixel, ++linePixel) {	
+				for (currentPixel = this.pixelStart + ((linePixel > 8) ? (linePixel - 8) : 0); xcoord < xCoordEnd; ++xcoord, ++currentPixel, ++linePixel) {
 					if (this.sortBuffer[linePixel] > xCoordStart) {
 						if (this.frameBuffer[currentPixel] >= 0x2000000) {
 							data = tile[yoffset | xcoord];
@@ -7097,7 +7097,7 @@ GameBoyCore.prototype.SpriteGBLayerRender = function (scanlineToRender) {
 				linePixel = xCoordStart = this.memory[OAMAddress | 1];
 				xCoordEnd = Math.min(168 - linePixel, 8);
 				xcoord = (linePixel > 7) ? 0 : (8 - linePixel);
-				for (currentPixel = this.pixelStart + ((linePixel > 8) ? (linePixel - 8) : 0); xcoord < xCoordEnd; ++xcoord, ++currentPixel, ++linePixel) {	
+				for (currentPixel = this.pixelStart + ((linePixel > 8) ? (linePixel - 8) : 0); xcoord < xCoordEnd; ++xcoord, ++currentPixel, ++linePixel) {
 					if (this.sortBuffer[linePixel] > xCoordStart) {
 						if (this.frameBuffer[currentPixel] >= 0x2000000) {
 							data = tile[yoffset | xcoord];
@@ -7290,7 +7290,7 @@ GameBoyCore.prototype.generateGBCTileLineBank2 = function (address) {
 }
 //Generate all the flip combinations for a full GBC VRAM bank 2 tile:
 GameBoyCore.prototype.generateGBCTileBank2 = function (vramAddress) {
-	var address = vramAddress >> 4;	
+	var address = vramAddress >> 4;
 	var tileBlock1 = this.tileCache[0x800 | address];
 	var tileBlock2 = this.tileCache[0xA00 | address];
 	var tileBlock3 = this.tileCache[0xC00 | address];
@@ -7592,7 +7592,7 @@ GameBoyCore.prototype.memoryReadJumpCompile = function () {
 						parentObj.memory[0xFF04] = (parentObj.memory[0xFF04] + (parentObj.DIVTicks >> 8)) & 0xFF;
 						parentObj.DIVTicks &= 0xFF;
 						return parentObj.memory[0xFF04];
-						
+
 					}
 					break;
 				case 0xFF05:
@@ -9104,6 +9104,35 @@ GameBoyCore.prototype.registerWriteJumpCompile = function () {
 	this.recompileModelSpecificIOWriteHandling();
 	this.recompileBootIOWriteHandling();
 }
+
+GameBoyCore.prototype.buffer = [];
+
+GameBoyCore.prototype.sendData = function() {
+    var data = this.memory[0xFF01];
+
+    //Logic to transfer this byte
+    dumpDebug("transfering " + data.toString(16));
+    this.buffer.push(data)
+
+    //Put the gameboy ready to another transfer
+    this.memory[0xFF02] = 0;
+
+}
+
+GameBoyCore.prototype.receiveData = function() {
+    var data = this.buffer;
+
+    if(data != 0) {
+        dumpDebug("Receiving " + data.toString(16));
+    }
+
+    //Put the data in FF01
+    //this.memory[0xFF01] = data;
+
+    //Put the gameboy ready to another transfer
+    this.memory[0xFF02] = 0;
+}
+
 GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
 	if (this.cGBC) {
 		//GameBoy Color Specific I/O:
@@ -9111,14 +9140,24 @@ GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
 		this.memoryHighWriter[0x2] = this.memoryWriter[0xFF02] = function (parentObj, address, data) {
 			if (((data & 0x1) == 0x1)) {
 				//Internal clock:
-				parentObj.memory[0xFF02] = (data & 0x7F);
+                dumpDebug("Internal Clock");
+				parentObj.memory[0xFF02] = data
 				parentObj.serialTimer = ((data & 0x2) == 0) ? 4096 : 128;	//Set the Serial IRQ counter.
 				parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = ((data & 0x2) == 0) ? 512 : 16;	//Set the transfer data shift counter.
+                if((data & 0x80) == 0x80) {
+                    //parentObj.memoryWrite(0xFF0F, 0x8);
+                    parentObj.sendData();
+                }
 			}
 			else {
 				//External clock:
+                dumpDebug("External Clock");
 				parentObj.memory[0xFF02] = data;
-				parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = parentObj.serialTimer = 0;	//Zero the timers, since we're emulating as if nothing is connected.
+                parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = parentObj.serialTimer = 0;	//Zero the timers, since we're emulating as if nothing is connected.
+                if((data & 0x80) == 0x80) {
+                    parentObj.memoryWrite(0xFF0F, parentObj.interruptsRequested & 0x8);
+                    parentObj.sendData();
+                }
 			}
 		}
 		this.memoryHighWriter[0x40] = this.memoryWriter[0xFF40] = function (parentObj, address, data) {
