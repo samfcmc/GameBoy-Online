@@ -9117,6 +9117,7 @@ GameBoyCore.prototype.sendData = function() {
     //Put the gameboy ready to another transfer
     this.memory[0xFF02] = 0;
 
+    //this.memoryWrite(0xFF0F, this.interruptsRequested | 8);
 }
 
 GameBoyCore.prototype.receiveData = function() {
@@ -9131,6 +9132,14 @@ GameBoyCore.prototype.receiveData = function() {
 
     //Put the gameboy ready to another transfer
     this.memory[0xFF02] = 0;
+}
+
+GameBoyCore.prototype.receiveSomeData = function(data) {
+    //Put the received data in SB
+    this.memory[0xFF01] = data;
+
+    //Activate the interruption
+    this.memoryWrite(0xFF0F, this.interruptsRequested | 8);
 }
 
 GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
@@ -9155,7 +9164,7 @@ GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
 				parentObj.memory[0xFF02] = data;
                 parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = parentObj.serialTimer = 0;	//Zero the timers, since we're emulating as if nothing is connected.
                 if((data & 0x80) == 0x80) {
-                    parentObj.memoryWrite(0xFF0F, parentObj.interruptsRequested & 0x8);
+                    //parentObj.memoryWrite(0xFF0F, parentObj.interruptsRequested | 0x8);
                     parentObj.sendData();
                 }
 			}
