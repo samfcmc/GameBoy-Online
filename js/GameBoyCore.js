@@ -9107,28 +9107,14 @@ GameBoyCore.prototype.registerWriteJumpCompile = function () {
 
 GameBoyCore.prototype.buffer = [];
 
+GameBoyCore.prototype.multiplayerOn = false;
+
 GameBoyCore.prototype.sendData = function() {
     var data = this.memory[0xFF01];
 
     //Logic to transfer this byte
-    dumpDebug("transfering " + data.toString(16));
-    this.buffer.push(data)
-
-    //Put the gameboy ready to another transfer
-    this.memory[0xFF02] = 0;
-
-    //this.memoryWrite(0xFF0F, this.interruptsRequested | 8);
-}
-
-GameBoyCore.prototype.receiveData = function() {
-    var data = this.buffer;
-
-    if(data != 0) {
-        dumpDebug("Receiving " + data.toString(16));
-    }
-
-    //Put the data in FF01
-    //this.memory[0xFF01] = data;
+    dumpDebug("SENDING: " + data.toString(16));
+    //this.buffer.push(data)
 
     //Put the gameboy ready to another transfer
     this.memory[0xFF02] = 0;
@@ -9137,10 +9123,16 @@ GameBoyCore.prototype.receiveData = function() {
 GameBoyCore.prototype.receiveSomeData = function(data) {
     //Put the received data in SB
     this.memory[0xFF01] = data;
+    this.memory[0xFF02] = 0;
+
+    dumpDebug("RECEIVED: " + data.toString(16));
 
     //Activate the interruption
     this.memoryWrite(0xFF0F, this.interruptsRequested | 8);
 }
+
+GameBoyCore.prototype.stopFool = 100;
+GameBoyCore.prototype.fool = 0;
 
 GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
 	if (this.cGBC) {
@@ -9156,6 +9148,7 @@ GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
                 if((data & 0x80) == 0x80) {
                     //parentObj.memoryWrite(0xFF0F, 0x8);
                     parentObj.sendData();
+                    parentObj.multiplayerOn = true;
                 }
 			}
 			else {
@@ -9165,7 +9158,12 @@ GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
                 parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = parentObj.serialTimer = 0;	//Zero the timers, since we're emulating as if nothing is connected.
                 if((data & 0x80) == 0x80) {
                     //parentObj.memoryWrite(0xFF0F, parentObj.interruptsRequested | 0x8);
-                    parentObj.sendData();
+                    dumpDebug('DATA: ' + parentObj.memory[0xFF01].toString(16));
+                    if(parentObj.multiplayerOn && parentObj.stopFool != 0) {
+                        parentObj.receiveSomeData(parentObj.memory[0xFF01]);
+                        parentObj.multiplayerOn = false;
+                        parentObj.stopFool--;
+                    }
                 }
 			}
 		}
