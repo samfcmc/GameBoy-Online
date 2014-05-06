@@ -1,0 +1,69 @@
+<html>
+   
+    <head>
+    
+    </head>
+    
+    <body>
+        <label>Your id: </label>
+        <input type="text" id="peerid" value="Getting an id...">
+        <br>
+        <label>Connect to:</label>
+        <input type="text" id="otherpeerid">
+        <button onclick="connect()">Connect</button>
+        <br>
+        <span>Connected with:</span>
+        <span id="connectedwith">Not connected with someone yet</span>
+        <br>
+        <textarea id="chat" rows="10" cols="50"></textarea>
+        <br>
+        <input type="text" id="message">
+        <button onclick="send()">Send</button>
+
+        <script src="js/jquery-1.11.0.js"></script>
+        <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+        <script type="text/javascript">
+            var peer = new Peer({key: '2c0irpye8mrq9f6r'});
+            var connection;
+
+            peer.on('open', function(id) {
+                $('#peerid').val(peer.id);
+                peer.on('connection', function(conn) {
+                    connection = conn;
+                    updateConnectedWith();
+                    configConnection();
+                });
+            });
+
+            function updateConnectedWith() {
+                $('#connectedwith').html(connection.peer);
+            }
+
+            function connect(){
+                var id = $('#otherpeerid').val();
+                connection = peer.connect(id);
+                configConnection();
+            }
+            
+            function configConnection() {
+                connection.on('open', function() {
+                    updateConnectedWith()
+                    connection.on('data', function(data) {
+                        addToChat('Other guy', data);
+                    });
+                });
+            }
+
+            function send() {
+                var msg = $('#message').val();
+                addToChat('Me', msg);
+                connection.send(msg);
+            }
+
+            function addToChat(who, msg) {
+                $('#chat').append(who + ': ' + msg + '\n');
+            }
+        </script>
+    </body>
+
+</html>
