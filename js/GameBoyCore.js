@@ -271,6 +271,8 @@ function GameBoyCore(canvas, ROMImage) {
 	this.resizePathClear = true;
 	//Initialize the white noise cache tables ahead of time:
 	this.intializeWhiteNoise();
+  //GameLink
+  this.link = new Link(this);
 }
 GameBoyCore.prototype.GBBOOTROM = [		//GB BOOT ROM
 	//Add 256 byte boot rom here if you are going to use it.
@@ -9115,14 +9117,14 @@ GameBoyCore.prototype.sendData = function() {
     //Logic to transfer this byte
     dumpDebug("SENDING: " + data.toString(16));
     //this.buffer.push(data)
-
+    this.link.send(data);
     //Put the gameboy ready to another transfer
     this.memory[0xFF02] = 0;
 }
 
-GameBoyCore.prototype.receiveSomeData = function(data) {
+GameBoyCore.prototype.receiveLinkData = function(data) {
     //Put the received data in SB
-    this.memory[0xFF01] = data;
+    this.memory[0xFF01] = data & 0xFF;
     this.memory[0xFF02] = 0;
 
     dumpDebug("RECEIVED: " + data.toString(16));
@@ -9146,24 +9148,17 @@ GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
 				parentObj.serialTimer = ((data & 0x2) == 0) ? 4096 : 128;	//Set the Serial IRQ counter.
 				parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = ((data & 0x2) == 0) ? 512 : 16;	//Set the transfer data shift counter.
                 if((data & 0x80) == 0x80) {
-                    //parentObj.memoryWrite(0xFF0F, 0x8);
                     parentObj.sendData();
-                    parentObj.multiplayerOn = true;
                 }
 			}
 			else {
 				//External clock:
                 dumpDebug("External Clock");
-				parentObj.memory[0xFF02] = data;
+				        parentObj.memory[0xFF02] = data;
                 parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = parentObj.serialTimer = 0;	//Zero the timers, since we're emulating as if nothing is connected.
                 if((data & 0x80) == 0x80) {
                     //parentObj.memoryWrite(0xFF0F, parentObj.interruptsRequested | 0x8);
                     dumpDebug('DATA: ' + parentObj.memory[0xFF01].toString(16));
-                    if(parentObj.multiplayerOn && parentObj.stopFool != 0) {
-                        parentObj.receiveSomeData(parentObj.memory[0xFF01]);
-                        parentObj.multiplayerOn = false;
-                        parentObj.stopFool--;
-                    }
                 }
 			}
 		}

@@ -405,3 +405,50 @@ function initNewCanvasSize() {
 		}
 	}
 }
+
+function connect(text_input_id){
+	var id = $("#" + text_input_id);
+	gameboy.link.connect(id);
+}
+
+function getID(spanID){
+	gameboy.link.initPeer(spanID);
+}
+
+// Call the Connection function
+function Link(gb){
+	this.connection;
+	this.gameboy = gb;
+
+	this.connect = function(id){
+		this.connection = this.peer.connect(id);
+		this.configConnection();
+	}
+
+	this.configConnection = function() {
+		var that = this;
+		this.connection.on('open', function() {
+			that.connection.on('data', function(data) {
+					that.gameboy.receiveLinkData(data);
+			});
+		});
+	}
+
+	this.initPeer = function(spanID){
+		this.peer = new Peer({key: '2c0irpye8mrq9f6r'});
+		var _peer = this.peer;
+		var that = this;
+		this.peer.on("open", function(id){
+				$('#' + spanID).html(_peer.id);
+				_peer.on("connection", function(conn){
+					console.log("Connect To " + conn.peer);
+					that.connection = conn;
+					configConnection();
+				});
+			});
+	}
+
+	this.send = function(message) {
+		this.connection.send(message);
+	}
+}
