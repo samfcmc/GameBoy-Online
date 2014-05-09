@@ -237,7 +237,7 @@ div#local_storage_popup {
 	width: 300px;
 }
 div#local_storage_listing, div#freeze_listing {
-	min-width: 400px;
+	min-width: 200px;
 	min-height: 350px;
 }
 div.storageList {

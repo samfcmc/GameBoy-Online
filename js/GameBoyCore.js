@@ -7569,19 +7569,22 @@ GameBoyCore.prototype.memoryReadJumpCompile = function () {
 				case 0xFF01:
 					//SB
 					this.memoryHighReader[0x01] = this.memoryReader[0xFF01] = function (parentObj, address) {
-						return (parentObj.memory[0xFF02] < 0x80) ? parentObj.memory[0xFF01] : 0xFF;
+					    return parentObj.memory[0xFF01];
+                    //return (parentObj.memory[0xFF02] < 0x80) ? parentObj.memory[0xFF01] : 0xFF;
 					}
 					break;
 				case 0xFF02:
 					//SC
 					if (this.cGBC) {
 						this.memoryHighReader[0x02] = this.memoryReader[0xFF02] = function (parentObj, address) {
-							return ((parentObj.serialTimer <= 0) ? 0x7C : 0xFC) | parentObj.memory[0xFF02];
+							return parentObj.memory[0xFF02];
+                            //return ((parentObj.serialTimer <= 0) ? 0x7C : 0xFC) | parentObj.memory[0xFF02];
 						}
 					}
 					else {
 						this.memoryHighReader[0x02] = this.memoryReader[0xFF02] = function (parentObj, address) {
-							return ((parentObj.serialTimer <= 0) ? 0x7E : 0xFE) | parentObj.memory[0xFF02];
+							return parentObj.memory[0xFF02];
+                            //return ((parentObj.serialTimer <= 0) ? 0x7E : 0xFE) | parentObj.memory[0xFF02];
 						}
 					}
 					break;
@@ -9089,7 +9092,7 @@ GameBoyCore.prototype.registerWriteJumpCompile = function () {
 	}
 	this.memoryHighWriter[0x72] = this.memoryWriter[0xFF72] = function (parentObj, address, data) {
 		parentObj.memory[0xFF72] = data;
-	}
+	}//
 	this.memoryHighWriter[0x73] = this.memoryWriter[0xFF73] = function (parentObj, address, data) {
 		parentObj.memory[0xFF73] = data;
 	}
@@ -9114,51 +9117,61 @@ GameBoyCore.prototype.multiplayerOn = false;
 GameBoyCore.prototype.sendData = function() {
     var data = this.memory[0xFF01];
 
+    //dumpDebug('SEND: ' + data.toString(16));
     //Logic to transfer this byte
-    dumpDebug("SENDING: " + data.toString(16));
+   // dumpDebug("SENDING: " + data.toString(16));
     //this.buffer.push(data)
     this.link.send(data);
     //Put the gameboy ready to another transfer
-    this.memory[0xFF02] = 0;
+}
+
+GameBoyCore.prototype.transferCompleted = function() {
+    this.memory[0xFF02] = this.memory[0xFF02] & 0x7F;
+    this.serialInterrupt();
 }
 
 GameBoyCore.prototype.receiveLinkData = function(data) {
     //Put the received data in SB
     this.memory[0xFF01] = data & 0xFF;
-    this.memory[0xFF02] = 0;
 
-    dumpDebug("RECEIVED: " + data.toString(16));
+    ///dumpDebug('RECEIVE: ' + data.toString(16));
+    //dumpDebug("RECEIVED: " + data.toString(16));
+    this.transferCompleted();
+}
 
-    //Activate the interruption
+GameBoyCore.prototype.serialInterrupt = function(data) {
     this.memoryWrite(0xFF0F, this.interruptsRequested | 8);
 }
 
 GameBoyCore.prototype.stopFool = 100;
 GameBoyCore.prototype.fool = 0;
 
+
 GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {
 	if (this.cGBC) {
 		//GameBoy Color Specific I/O:
-		//SC (Serial Transfer Control Register)
+ //SC (Serial Transfer Control Register)
 		this.memoryHighWriter[0x2] = this.memoryWriter[0xFF02] = function (parentObj, address, data) {
 			if (((data & 0x1) == 0x1)) {
 				//Internal clock:
-                dumpDebug("Internal Clock");
+               // dumpDebug("Internal Clock");
 				parentObj.memory[0xFF02] = data
-				parentObj.serialTimer = ((data & 0x2) == 0) ? 4096 : 128;	//Set the Serial IRQ counter.
-				parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = ((data & 0x2) == 0) ? 512 : 16;	//Set the transfer data shift counter.
+				//parentObj.serialTimer = ((data & 0x2) == 0) ? 4096 : 128;	//Set the Serial IRQ counter.
+				//parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = ((data & 0x2) == 0) ? 512 : 16;	//Set the transfer data shift counter.
                 if((data & 0x80) == 0x80) {
                     parentObj.sendData();
+                   // dumpDebug('Internal DATA: ' + parentObj.memory[0xFF01].toString(16));
                 }
 			}
 			else {
 				//External clock:
-                dumpDebug("External Clock");
+                //dumpDebug("External Clock");
 				        parentObj.memory[0xFF02] = data;
                 parentObj.serialShiftTimer = parentObj.serialShiftTimerAllocated = parentObj.serialTimer = 0;	//Zero the timers, since we're emulating as if nothing is connected.
                 if((data & 0x80) == 0x80) {
+                   // parentObj.sendData();
                     //parentObj.memoryWrite(0xFF0F, parentObj.interruptsRequested | 0x8);
-                    dumpDebug('DATA: ' + parentObj.memory[0xFF01].toString(16));
+                 //  dumpDebug('External');
                 }
 			}
 		}

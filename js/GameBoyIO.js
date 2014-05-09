@@ -407,7 +407,7 @@ function initNewCanvasSize() {
 }
 
 function connect(text_input_id){
-	var id = $("#" + text_input_id);
+	var id = $("#" + text_input_id).val();
 	gameboy.link.connect(id);
 }
 
@@ -429,26 +429,34 @@ function Link(gb){
 		var that = this;
 		this.connection.on('open', function() {
 			that.connection.on('data', function(data) {
-					that.gameboy.receiveLinkData(data);
+                    if(data == 'ack') {
+                        dumpDebug('ACK');
+                        that.gameboy.transferCompleted();
+                    }
+                    else {
+                        that.send('ack');
+                        that.gameboy.receiveLinkData(data);
+                    }
 			});
 		});
 	}
 
 	this.initPeer = function(spanID){
 		this.peer = new Peer({key: '2c0irpye8mrq9f6r'});
-		var _peer = this.peer;
 		var that = this;
 		this.peer.on("open", function(id){
-				$('#' + spanID).html(_peer.id);
-				_peer.on("connection", function(conn){
-					console.log("Connect To " + conn.peer);
+				$('#' + spanID).html(that.peer.id);
+				that.peer.on("connection", function(conn){
+					console.log("Connected To " + conn.peer);
 					that.connection = conn;
-					configConnection();
+					that.configConnection();
 				});
 			});
 	}
 
 	this.send = function(message) {
-		this.connection.send(message);
+        if(this.connection) {
+            this.connection.send(message);
+        }
 	}
 }
