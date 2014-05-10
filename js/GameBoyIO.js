@@ -428,15 +428,23 @@ function Link(gb){
 	this.configConnection = function() {
 		var that = this;
 		this.connection.on('open', function() {
-			that.connection.on('data', function(data) {
-                    if(data == 'ack') {
+			that.connection.on('data', function(message) {
+				//On receive
+				if(message.type == 'data') {
+					that.connection.send({type: 'ack', data: that.gameboy.memory[0xFF01]});
+					that.gameboy.receiveLinkData(message.data);
+				}
+				else if(message.type == 'ack') {
+					that.gameboy.receiveAck(message.data);
+				}
+                    /*if(data == 'ack') {
                         dumpDebug('ACK');
-                        that.gameboy.transferCompleted();
+                        //that.gameboy.transferCompleted();
                     }
                     else {
-                        that.send('ack');
+                        //that.send('ack');
                         that.gameboy.receiveLinkData(data);
-                    }
+                    }*/
 			});
 		});
 	}
