@@ -5756,6 +5756,29 @@ GameBoyCore.prototype.run = function () {
 		}
 	}
 }
+
+GameBoyCore.prototype.checkPendingTransfers = function() {
+	/*var firstMessage = this.pendingTransfers[0];
+	if(firstMessage && firstMessage.type == 'ack') {
+		//dumpDebug('Processing ack');
+		firstMessage = this.pendingTransfers.shift();
+		this.receiveAck(firstMessage.data);
+	}*/
+	//Check if it's not processing a transfer
+	if((this.memoryRead(0xFFFF) == 0) ||
+		((this.memoryRead(0xFF0F) & 8) != 0)) {
+		// Just continue
+	}
+	else {
+		// We can process the next
+		var message = this.pendingTransfers.shift();
+		if(message) {
+			//dumpDebug('Processing received message');
+			this.receiveLinkData(message.data);
+		} 
+	}
+}
+
 GameBoyCore.prototype.executeIteration = function () {
 	//Iterate the interpreter loop:
 	var opcodeToExecute = 0;
@@ -5826,6 +5849,8 @@ GameBoyCore.prototype.executeIteration = function () {
 		if (this.emulatorTicks >= this.CPUCyclesTotal) {
 			this.iterationEndRoutine();
 		}
+
+		this.checkPendingTransfers();
 	}
 }
 GameBoyCore.prototype.iterationEndRoutine = function () {
@@ -9110,13 +9135,24 @@ GameBoyCore.prototype.registerWriteJumpCompile = function () {
 	this.recompileBootIOWriteHandling();
 }
 
+GameBoyCore.prototype.pendingTransfers = [];
+
 GameBoyCore.prototype.sendData = function() {
     var data = this.memory[0xFF01];
 
    	//dumpDebug("SEND: " + data.toString(16));
     this.link.send({type: 'data', data: data});
-    sleep(10);
     //Put the gameboy ready to another transfer
+}
+
+GameBoyCore.prototype.receiveMessage = function(message) {
+	/*if(message.type == 'ack') {
+		this.pendingAcks.push(message.data);
+	}
+	else {
+		this.pendingTransfers.push(message.data);	
+	}*/
+	this.pendingTransfers.push(message);
 }
 
 GameBoyCore.prototype.receiveLinkData = function(data) {
@@ -9124,6 +9160,12 @@ GameBoyCore.prototype.receiveLinkData = function(data) {
     //sleep(500);
 
     this.memory[0xFF01] = data;
+
+    //Still processing another transfer
+    /*if(((this.memory[0xFF0F] & 8) != 0) || 
+    	((this.interruptsEnabled & 8) != 0)) {
+    	dumpDebug("Shit happened!");
+    }*/
 
     this.transferCompleted();
 }
@@ -9140,8 +9182,8 @@ GameBoyCore.prototype.receiveAck = function(data) {
 }
 
 GameBoyCore.prototype.triggerSerialInterrupt = function() {
-    this.interruptsRequested |= 8;
-    this.checkIRQMatching();
+	var ints = this.memoryRead(0xFF0F);
+    this.memoryWrite(0xFF0F, ints | 8);
 }
 
 function sleep(milliseconds) {

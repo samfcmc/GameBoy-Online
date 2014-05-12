@@ -432,10 +432,11 @@ function Link(gb){
 				//On receive
 				if(message.type == 'data') {
 					that.connection.send({type: 'ack', data: that.gameboy.memory[0xFF01]});
-					that.gameboy.receiveLinkData(message.data);
+					that.gameboy.receiveMessage(message);
 				}
 				else if(message.type == 'ack') {
-					that.gameboy.receiveAck(message.data);
+					that.gameboy.receiveMessage(message);
+					//that.gameboy.receiveAck(message.data);
 				}
                     /*if(data == 'ack') {
                         dumpDebug('ACK');
