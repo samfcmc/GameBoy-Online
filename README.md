@@ -1,4 +1,32 @@
-JavaScript GameBoy Color Emulator
+JavaScript GameBoy Color Emulator **Extended**
+============================================ 
+
+**To Run:**
+
+* Open the index.xhtml in one of the browsers described below.
+* In the application select File > Open As > Local File.
+* Open the folder ../games and Select the game you want to play.
+
+**To Enable Multiplayer:**
+
+* After loaded the game in two browsers.
+* Click on Get An ID button.
+* Copy the generated code and paste it on ConnectTo field in another browser.
+* Repeat the previous procedure for the second browser.
+
+Tested Games
+============
+
+**Pokemon Color**
+
+* Open the file Pokemon Yellow.gb
+* Enable multiplayer
+* Enter in connect link in both players
+* The game will work fine until the players begin the battle
+* At this point strange things may happen 
+
+
+JavaScript GameBoy Color Emulator 
 =================================
 
 **Copyright (C) 2010 - 2012 Grant Galitz**
