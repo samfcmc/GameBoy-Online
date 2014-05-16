@@ -4,14 +4,14 @@ JavaScript GameBoy Color Emulator **Extended**
 **To Run:**
 
 * Open the index.xhtml in one of the browsers described below.
-* In the application select `File` > `Open As` > `Local File`.
+* In the application select File > Open As > Local File.
 * Open the folder ../games and Select the game you want to play.
 
 **To Enable Multiplayer:**
 
 * After loaded the game in two browsers.
-* Click on `Get An ID` button.
-* Copy the generated code and paste it on `Connect To` field in another browser.
+* Click on Get An ID button.
+* Copy the generated code and paste it on ConnectTo field in another browser.
 * Repeat the previous procedure for the second browser.
 
 Tested Games
