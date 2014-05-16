@@ -5765,9 +5765,12 @@ GameBoyCore.prototype.checkPendingTransfers = function() {
 		this.receiveAck(firstMessage.data);
 	}*/
 	//Check if it's not processing a transfer
-	if((this.memoryRead(0xFFFF) == 0) ||
+	/*if((this.memoryRead(0xFFFF)  != 0) ||
 		((this.memoryRead(0xFF0F) & 8) != 0)) {
 		// Just continue
+	}*/
+	if((this.memoryRead(0xFF0F) & 8) != 0) {
+		//Just continue
 	}
 	else {
 		// We can process the next
@@ -5784,6 +5787,8 @@ GameBoyCore.prototype.executeIteration = function () {
 	var opcodeToExecute = 0;
 	var timedTicks = 0;
 	while (this.stopEmulator == 0) {
+		this.checkPendingTransfers();
+
 		//Interrupt Arming:
 		switch (this.IRQEnableDelay) {
 			case 1:
@@ -5850,7 +5855,7 @@ GameBoyCore.prototype.executeIteration = function () {
 			this.iterationEndRoutine();
 		}
 
-		this.checkPendingTransfers();
+		//this.checkPendingTransfers();
 	}
 }
 GameBoyCore.prototype.iterationEndRoutine = function () {
@@ -9142,7 +9147,7 @@ GameBoyCore.prototype.sendData = function() {
 
    	//dumpDebug("SEND: " + data.toString(16));
     this.link.send({type: 'data', data: data});
-    //Put the gameboy ready to another transfer
+    //dumpDebug("SEND: " + data);
 }
 
 GameBoyCore.prototype.receiveMessage = function(message) {
@@ -9160,6 +9165,8 @@ GameBoyCore.prototype.receiveLinkData = function(data) {
     //sleep(500);
 
     this.memory[0xFF01] = data;
+
+    //dumpDebug("Processing: " + data);
 
     //Still processing another transfer
     /*if(((this.memory[0xFF0F] & 8) != 0) || 
@@ -9184,13 +9191,6 @@ GameBoyCore.prototype.receiveAck = function(data) {
 GameBoyCore.prototype.triggerSerialInterrupt = function() {
 	var ints = this.memoryRead(0xFF0F);
     this.memoryWrite(0xFF0F, ints | 8);
-}
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    while((new Date().getTime() - start) < milliseconds);
-  }
 }
 
 GameBoyCore.prototype.recompileModelSpecificIOWriteHandling = function () {

@@ -415,6 +415,13 @@ function getID(spanID){
 	gameboy.link.initPeer(spanID);
 }
 
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    while((new Date().getTime() - start) < milliseconds);
+  }
+}
+
 // Call the Connection function
 function Link(gb){
 	this.connection;
