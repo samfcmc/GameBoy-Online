@@ -9,7 +9,7 @@ JavaScript GameBoy Color Emulator **Extended**
 
 **To Enable Multiplayer:**
 
-* After loaded the game in two browsers.
+* After loaded the game in two browsers. Different gbc files for each browser.
 * Click on `Get An ID` button.
 * Copy the generated code and paste it on `Connect To` field in another browser.
 * Repeat the previous procedure for the second browser.
@@ -19,11 +19,15 @@ Tested Games
 
 **Pokemon Color**
 
-* Open the file Pokemon Yellow.gb
+* Open the file Pokemon Yellow.gbc
 * Enable multiplayer
 * Enter in connect link in both players
 * The game will work fine until the players begin the battle
 * At this point strange things may happen 
+
+**Mario Tennins**
+**NBA Jam 2001**
+**Tetris DX2**
 
 
 JavaScript GameBoy Color Emulator 
